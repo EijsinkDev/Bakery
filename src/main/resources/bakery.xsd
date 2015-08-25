@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="xml.my.bakery.com"
+		xmlns:xs="http://www.w3.org/2001/XMLSchema"  
+		xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+		xmlns:bakery="xml.my.bakery.com"
+		jxb:version="2.1">
+	<xs:element name="productlist">
+		<xs:annotation>
+			<xs:appinfo>
+				<jxb:class name="ProductList"/>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="product" type="bakery:product" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="product" abstract="true">
+		<xs:sequence>
+			<xs:element name="ingredients" type="bakery:ingredient" minOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="bread">
+		<xs:complexContent>
+			<xs:extension  base="bakery:product">
+				<xs:attribute name="slices" type="xs:integer" use="required"/>
+			</xs:extension >
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="cookie">
+		<xs:complexContent>
+			<xs:extension  base="bakery:product">
+				<xs:attribute name="crunchy" type="xs:boolean" use="required"/>
+			</xs:extension >
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="cake">
+		<xs:complexContent>
+			<xs:extension  base="bakery:product">
+				<xs:sequence>  
+					<xs:element type="bakery:glazing" name="glazing"/>
+				</xs:sequence>
+			</xs:extension >
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="glazing">
+		<xs:complexContent>
+			<xs:extension  base="bakery:product">
+				<xs:attribute name="slices" type="xs:integer" use="required"/>
+			</xs:extension >
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ingredient">
+		<xs:all>
+			<xs:element name="unit" type="bakery:unit"/>
+		</xs:all>
+		<xs:attribute name="number" type="xs:integer" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="unit">
+		<xs:annotation>
+			<xs:appinfo>
+				<jxb:class name="UnitType"/>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+	</xs:complexType>
+</xs:schema>
