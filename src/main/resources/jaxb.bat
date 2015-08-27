@@ -1,1 +1,1 @@
-java -jar "c:\Program Files\jaxb\jaxb-xjc.jar" bakery.xsd -d ../../generated/java/ -mark-generated -npa -extension -Xinject-code
+xjc bakery.xsd -d ../../generated/java/ -mark-generated -npa -extension -Xinject-code
