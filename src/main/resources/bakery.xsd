@@ -49,7 +49,7 @@
 	<xs:complexType name="bread">
 		<xs:complexContent>
 			<xs:extension  base="bakery:product">
-				<xs:attribute name="slices" type="xs:integer" use="required"/>
+				<xs:attribute name="slices" type="xs:int" use="required"/>
 			</xs:extension >
 		</xs:complexContent>
 	</xs:complexType>
@@ -70,9 +70,9 @@
 	*/
 	@Override
 	public String toString(){
-		String str = getIngredientlist().toString();
-		if(glazing == null){
-			str += "\n\t" + glazing.toString();
+		String str = super.toString();
+		if(glaze != null){
+			str += "\n+" + glaze.toString();
 		}
 		
 		return str;
@@ -84,12 +84,12 @@
 		<xs:complexContent>
 			<xs:extension  base="bakery:product">
 				<xs:sequence>  
-					<xs:element type="bakery:glazing" name="glazing" maxOccurs="1"/>
+					<xs:element type="bakery:glaze" name="glaze" maxOccurs="1"/>
 				</xs:sequence>
 			</xs:extension >
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:complexType name="glazing">
+	<xs:complexType name="glaze">
 		<xs:complexContent>
 			<xs:extension  base="bakery:product">
 			</xs:extension >
@@ -147,18 +147,18 @@
 				</ci:code>
 			</xs:appinfo>
 		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="unit" type="bakery:unit" minOccurs="1" maxOccurs="1"/>
-		</xs:sequence>
-		<xs:attribute name="number" type="xs:int" use="required"/>
+		<xs:attribute name="unit" type="bakery:unit" use="required"/>
+		<xs:attribute name="number" type="xs:double" use="required"/>
 		<xs:attribute name="name" type="xs:string" use="required"/>
 	</xs:complexType>
 	<xs:simpleType name="unit">
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="Gram" />
-			<xs:enumeration value="Tablespoon" />
-			<xs:enumeration value="Pinch" />
-			<xs:enumeration value="Number" />
+			<xs:enumeration value="gram" />
+			<xs:enumeration value="tablespoon" />
+			<xs:enumeration value="teaspoon" />
+			<xs:enumeration value="pinch" />
+			<xs:enumeration value="cup" />
+			<xs:enumeration value="number" />
 		</xs:restriction>
 	</xs:simpleType>
 </xs:schema>

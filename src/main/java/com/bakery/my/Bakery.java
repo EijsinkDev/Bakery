@@ -8,70 +8,59 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
-import com.bakery.my.xml.Cookie;
-import com.bakery.my.xml.Ingredient;
-import com.bakery.my.xml.IngredientList;
 import com.bakery.my.xml.Product;
 import com.bakery.my.xml.ProductList;
-import com.bakery.my.xml.Unit;
 
-public class Bakery {
+/**
+ * JAXB Example class
+ */
+public final class Bakery {
 
-	public static String FILENAME = "Z:\\file.xml";
+	/**
+	 * Storage location of our XML file
+	 */
+	public static final String FILEPATH = System.getProperty("java.io.tmpdir") + "jaxbExample.xml";
 
-	ProductList productList;
-
-	public Bakery() {
-
+	/**
+	 * Constructor
+	 */
+	private Bakery() {
 	}
 
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args) {
-
-		writeXml(createProductList());
-		ProductList readList = (ProductList) readXml(FILENAME);
-
+		writeXml(createProductList(), FILEPATH);
+		ProductList readList = (ProductList) readXml(FILEPATH);
 		printList(readList);
 	}
 
+	/**
+	 * Creates a {@link ProductList} containing test data
+	 * 
+	 * @return test data
+	 */
 	public static ProductList createProductList() {
 		ProductList list = new ProductList();
-
-		Product chocolateCookie = new Cookie();
-		chocolateCookie.setName("Chocolate cookie");
-
-		IngredientList ingredientList = new IngredientList();
-		chocolateCookie.setIngredientlist(ingredientList);
-
-		Ingredient flower = new Ingredient();
-		flower.setName("flower");
-		flower.setUnit(Unit.GRAM);
-		flower.setNumber(500);
-		ingredientList.getIngredient().add(flower);
-
-		Ingredient salt = new Ingredient();
-		salt.setName("salt");
-		salt.setUnit(Unit.PINCH);
-		salt.setNumber(1);
-		ingredientList.getIngredient().add(salt);
-
-		Ingredient eggs = new Ingredient();
-		eggs.setName("eggs");
-		eggs.setUnit(Unit.NUMBER);
-		eggs.setNumber(3);
-		ingredientList.getIngredient().add(eggs);
-
-		Ingredient chocolate = new Ingredient();
-		chocolate.setName("chocolate");
-		chocolate.setUnit(Unit.GRAM);
-		chocolate.setNumber(100);
-		ingredientList.getIngredient().add(chocolate);
-
-		list.getProduct().add(chocolateCookie);
-
+		list.getProduct().add(Recipes.createChocolateCookie());
+		list.getProduct().add(Recipes.createCinnamonCookie());
+		list.getProduct().add(Recipes.createLemonCake());
+		list.getProduct().add(Recipes.createStrawberryCake());
+		list.getProduct().add(Recipes.createRyeBread());
 		return list;
 	}
 
+	/**
+	 * Unmarshalls ProductList XML data read from a file
+	 * 
+	 * @param filePath
+	 *            complete path to a file, should have read permission
+	 * @return an {@link Object} which should be of the {@link ProductList}
+	 *         class
+	 */
 	public static Object readXml(String filePath) {
+		System.out.println("Reading XML from " + filePath);
 		Object o = null;
 
 		try {
@@ -87,25 +76,38 @@ public class Bakery {
 		return o;
 	}
 
-	public static void writeXml(ProductList productList) {
+	/**
+	 * Marshalls XML {@link ProductList} which is written to a file
+	 * 
+	 * @param productList
+	 *            a {@link ProductList} Java class possibly containing multiple
+	 *            {@link Product}s
+	 * @param filePath
+	 *            complete path to a file, should have write permission
+	 * 
+	 */
+	public static void writeXml(ProductList productList, String filePath) {
+		System.out.println("Writing XML to " + filePath);
 		try {
-
-			File file = new File(FILENAME);
+			File file = new File(filePath);
 			JAXBContext jaxbContext = JAXBContext.newInstance(ProductList.class);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-			// output pretty printed
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
 			jaxbMarshaller.marshal(productList, file);
-
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Print products and ingredients in a human-readable way to the standard
+	 * output
+	 * 
+	 * @param list
+	 *            a list of {@link Product}s to be printed
+	 */
 	public static void printList(ProductList list) {
-		System.out.println("Products:");
+		System.out.println("Printing products read from XML:");
 		for (Product product : list.getProduct()) {
 			System.out.println(product);
 		}
