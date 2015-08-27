@@ -3,6 +3,8 @@
 		xmlns:xs="http://www.w3.org/2001/XMLSchema"  
 		xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
 		xmlns:bakery="xml.my.bakery.com"
+		xmlns:ci="http://jaxb.dev.java.net/plugin/code-injector"
+		jxb:extensionBindingPrefixes="ci"
 		jxb:version="2.1">
 	<xs:element name="productlist">
 		<xs:annotation>
@@ -17,9 +19,32 @@
 		</xs:complexType>
 	</xs:element>
 	<xs:complexType name="product" abstract="true">
-		<xs:sequence>
-			<xs:element name="ingredients" type="bakery:ingredient" minOccurs="1"/>
+		<xs:annotation>
+			<xs:appinfo>
+				<ci:code>
+					<![CDATA[
+	/**
+	* 
+	*/
+	@Override
+	public String toString(){
+		String str = name;
+		if(getIngredientlist()!=null){
+			str += getIngredientlist().toString();
+		}else{
+			str +="()";
+		}
+						
+		return str;
+	}
+	]]>
+				</ci:code>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:sequence>  
+			<xs:element type="bakery:ingredientlist" name="ingredientlist" minOccurs= "1" maxOccurs= "1"/>
 		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required"/>
 	</xs:complexType>
 	<xs:complexType name="bread">
 		<xs:complexContent>
@@ -36,10 +61,30 @@
 		</xs:complexContent>
 	</xs:complexType>
 	<xs:complexType name="cake">
+		<xs:annotation>
+			<xs:appinfo>
+				<ci:code>
+					<![CDATA[
+	/**
+	* 
+	*/
+	@Override
+	public String toString(){
+		String str = getIngredientlist().toString();
+		if(glazing == null){
+			str += "\n\t" + glazing.toString();
+		}
+		
+		return str;
+	}
+	]]>
+				</ci:code>
+			</xs:appinfo>
+		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension  base="bakery:product">
 				<xs:sequence>  
-					<xs:element type="bakery:glazing" name="glazing"/>
+					<xs:element type="bakery:glazing" name="glazing" maxOccurs="1"/>
 				</xs:sequence>
 			</xs:extension >
 		</xs:complexContent>
@@ -47,22 +92,73 @@
 	<xs:complexType name="glazing">
 		<xs:complexContent>
 			<xs:extension  base="bakery:product">
-				<xs:attribute name="slices" type="xs:integer" use="required"/>
 			</xs:extension >
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:complexType name="ingredient">
-		<xs:all>
-			<xs:element name="unit" type="bakery:unit"/>
-		</xs:all>
-		<xs:attribute name="number" type="xs:integer" use="required"/>
-	</xs:complexType>
-	<xs:complexType name="unit">
+	<xs:complexType name="ingredientlist">
 		<xs:annotation>
 			<xs:appinfo>
-				<jxb:class name="UnitType"/>
+				<jxb:class name="IngredientList"/>
+				<ci:code>
+					<![CDATA[
+	/**
+	* 
+	*/
+	@Override
+	public String toString() {
+		String str = "( ";
+		boolean notFirst = false; 
+		for (Ingredient ing : getIngredient()) {
+			if(notFirst){
+				str += ", ";
+			}
+			else{
+				notFirst = true;
+			}
+			str += ing.toString();
+		}
+		return str + " )";
+	}
+	]]>
+				</ci:code>
 			</xs:appinfo>
 		</xs:annotation>
+		<xs:sequence>  
+			<xs:element type="bakery:ingredient" name="ingredient" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ingredient">
+		<xs:annotation>
+			<xs:appinfo>
+				<jxb:class name="Ingredient"/>
+				<ci:code>
+					<![CDATA[
+	/**
+	* 
+	*/
+	@Override
+	public String toString() {
+		if(unit==Unit.NUMBER){
+			return "" + number + " " + name;
+		}
+		return "" + number + " " + unit.value() + " " + name;
+	}
+	]]>
+				</ci:code>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="unit" type="bakery:unit" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="number" type="xs:int" use="required"/>
 		<xs:attribute name="name" type="xs:string" use="required"/>
 	</xs:complexType>
+	<xs:simpleType name="unit">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Gram" />
+			<xs:enumeration value="Tablespoon" />
+			<xs:enumeration value="Pinch" />
+			<xs:enumeration value="Number" />
+		</xs:restriction>
+	</xs:simpleType>
 </xs:schema>
