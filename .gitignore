@@ -1,12 +1,2 @@
 /eclipse/bin/com
 
-/src/generated/java/com/bakery/my/xml/Ingredient.java
-/src/generated/java/com/bakery/my/xml/IngredientList.java
-/src/generated/java/com/bakery/my/xml/ObjectFactory.java
-/src/generated/java/com/bakery/my/xml/Product.java
-/src/generated/java/com/bakery/my/xml/ProductList.java
-/src/generated/java/com/bakery/my/xml/Unit.java
-/src/generated/java/com/bakery/my/xml/Bread.java
-/src/generated/java/com/bakery/my/xml/Cake.java
-/src/generated/java/com/bakery/my/xml/Cookie.java
-/src/generated/java/com/bakery/my/xml/Glaze.java
