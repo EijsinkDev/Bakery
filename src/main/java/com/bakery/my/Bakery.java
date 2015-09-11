@@ -69,10 +69,8 @@ public final class Bakery {
 			u = jc.createUnmarshaller();
 			o = u.unmarshal(new StreamSource(new File(filePath)));
 		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return o;
 	}
 
