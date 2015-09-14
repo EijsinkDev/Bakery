@@ -31,9 +31,13 @@ public final class Bakery {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		writeXml(createProductList(), FILEPATH);
-		ProductList readList = (ProductList) readXml(FILEPATH);
-		printList(readList);
+		try{
+			writeXml(createProductList(), FILEPATH);
+			ProductList readList = (ProductList) readXml(FILEPATH);
+			printList(readList);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -59,18 +63,14 @@ public final class Bakery {
 	 * @return an {@link Object} which should be of the {@link ProductList}
 	 *         class
 	 */
-	public static Object readXml(String filePath) {
+	public static Object readXml(String filePath) throws JAXBException {
 		System.out.println("Reading XML from " + filePath);
-		Object o = null;
+		
+		JAXBContext jc = JAXBContext.newInstance(ProductList.class);
+		Unmarshaller u;
+		u = jc.createUnmarshaller();
+		Object o = u.unmarshal(new StreamSource(new File(filePath)));
 
-		try {
-			JAXBContext jc = JAXBContext.newInstance(ProductList.class);
-			Unmarshaller u;
-			u = jc.createUnmarshaller();
-			o = u.unmarshal(new StreamSource(new File(filePath)));
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
 		return o;
 	}
 
@@ -84,17 +84,14 @@ public final class Bakery {
 	 *            complete path to a file, should have write permission
 	 * 
 	 */
-	public static void writeXml(ProductList productList, String filePath) {
+	public static void writeXml(ProductList productList, String filePath) throws JAXBException{
 		System.out.println("Writing XML to " + filePath);
-		try {
-			File file = new File(filePath);
-			JAXBContext jaxbContext = JAXBContext.newInstance(ProductList.class);
-			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			jaxbMarshaller.marshal(productList, file);
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
+		
+		File file = new File(filePath);
+		JAXBContext jaxbContext = JAXBContext.newInstance(ProductList.class);
+		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		jaxbMarshaller.marshal(productList, file);
 	}
 
 	/**
