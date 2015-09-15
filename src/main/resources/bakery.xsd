@@ -24,8 +24,8 @@
 				<ci:code>
 					<![CDATA[
 	/**
-	* 
-	*/
+     * Returns a String describing this product and it's ingredients
+     */
 	@Override
 	public String toString(){
 		String str = name;
@@ -66,8 +66,8 @@
 				<ci:code>
 					<![CDATA[
 	/**
-	* 
-	*/
+     * Returns a String description of this Cake, including Glaze, if any
+     */
 	@Override
 	public String toString(){
 		String str = super.toString();
@@ -90,10 +90,32 @@
 		</xs:complexContent>
 	</xs:complexType>
 	<xs:complexType name="glaze">
-		<xs:complexContent>
-			<xs:extension  base="bakery:product">
-			</xs:extension >
-		</xs:complexContent>
+		<xs:annotation>
+			<xs:appinfo>
+				<ci:code>
+					<![CDATA[
+	/**
+     * Returns a String describing this product and it's ingredients
+     */
+	@Override
+	public String toString(){
+		String str = name;
+		if(getIngredientlist()!=null){
+			str += getIngredientlist().toString();
+		}else{
+			str +="()";
+		}
+						
+		return str;
+	}
+	]]>
+				</ci:code>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:sequence>  
+			<xs:element type="bakery:ingredientlist" name="ingredientlist" minOccurs= "1" maxOccurs= "1"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required"/>
 	</xs:complexType>
 	<xs:complexType name="ingredientlist">
 		<xs:annotation>
@@ -102,8 +124,8 @@
 				<ci:code>
 					<![CDATA[
 	/**
-	* 
-	*/
+	 * Returns a String containing all ingredients
+     */
 	@Override
 	public String toString() {
 		String str = "( ";
@@ -134,8 +156,8 @@
 				<ci:code>
 					<![CDATA[
 	/**
-	* 
-	*/
+     * Returns a formatted String describing this ingredient
+     */
 	@Override
 	public String toString() {
 		if(unit==Unit.NUMBER){
