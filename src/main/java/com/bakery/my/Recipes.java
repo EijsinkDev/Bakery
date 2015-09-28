@@ -13,6 +13,7 @@ import com.bakery.my.xml.Unit;
  * Contains static functions to create some test data recipes for use with the
  * Bakery demo
  *
+ * @author Berry Klomp
  */
 public final class Recipes {
 

@@ -1,6 +1,7 @@
 package com.bakery.my;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -13,13 +14,20 @@ import com.bakery.my.xml.ProductList;
 
 /**
  * JAXB Example class
+ * 
+ * @author Berry Klomp
  */
 public final class Bakery {
 
 	/**
-	 * Storage location of our XML file
+	 * Name of our temp XML file
 	 */
-	public static final String FILEPATH = System.getProperty("java.io.tmpdir") + "jaxbExample.xml";
+	private static final String tempName = "jaxbExample";
+ 
+	/**
+	 * XML Extension
+	 */
+	private static final String tempExtension = ".xml";
 
 	/**
 	 * Constructor
@@ -31,9 +39,17 @@ public final class Bakery {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		try{
-			writeXml(createProductList(), FILEPATH);
-			ProductList readList = (ProductList) readXml(FILEPATH);
+		File file = null;
+		try {
+			file = File.createTempFile(tempName, tempExtension);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		try{		
+			writeXml(createProductList(), file);
+			ProductList readList = (ProductList) readXml(file);
 			printList(readList);
 		} catch (JAXBException e) {
 			e.printStackTrace();
@@ -58,18 +74,19 @@ public final class Bakery {
 	/**
 	 * Unmarshalls ProductList XML data read from a file
 	 * 
-	 * @param filePath
-	 *            complete path to a file, should have read permission
+	 * @param file
+	 *        file from which XML will be read
 	 * @return an {@link Object} which should be of the {@link ProductList}
 	 *         class
+	 * @throws JAXBException
 	 */
-	public static Object readXml(String filePath) throws JAXBException {
-		System.out.println("Reading XML from " + filePath);
+	public static Object readXml(File file) throws JAXBException {
+		System.out.println("Reading XML from " + file.getPath());
 		
+
 		JAXBContext jc = JAXBContext.newInstance(ProductList.class);
-		Unmarshaller u;
-		u = jc.createUnmarshaller();
-		Object o = u.unmarshal(new StreamSource(new File(filePath)));
+		Unmarshaller u = jc.createUnmarshaller();
+		Object o = u.unmarshal(new StreamSource(file));
 
 		return o;
 	}
@@ -78,16 +95,16 @@ public final class Bakery {
 	 * Marshalls XML {@link ProductList} which is written to a file
 	 * 
 	 * @param productList
-	 *            a {@link ProductList} Java class possibly containing multiple
+	 *          a {@link ProductList} Java class possibly containing multiple
 	 *            {@link Product}s
-	 * @param filePath
-	 *            complete path to a file, should have write permission
-	 * 
+	 * @param file
+	 *          file in which the XML will be written
+	 * @throws JAXBException
+	 * 				
 	 */
-	public static void writeXml(ProductList productList, String filePath) throws JAXBException{
-		System.out.println("Writing XML to " + filePath);
-		
-		File file = new File(filePath);
+	public static void writeXml(ProductList productList, File file) throws JAXBException{
+		System.out.println("Writing XML to " + file.getPath());
+
 		JAXBContext jaxbContext = JAXBContext.newInstance(ProductList.class);
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
